@@ -30,7 +30,6 @@ public class Player extends Thread {
     }
 
     public void run() {
-
         try {
             String login = this.clientIn.readLine();
             this.clientOut.writeBytes("OK\n");
@@ -65,7 +64,7 @@ public class Player extends Thread {
                             this.clientOut.writeBytes(command);
                             this.clientOut.flush();
                             do {
-                                message = this.clientIn.readLine(); //NAJPRAWDOPODOBNIEJ PO ATAKU TU SIE BLOKUJE CZEKAJAC NA NOWY ATAK
+                                message = this.clientIn.readLine();
                                 this.clientOut.writeBytes("OK\n");
                                 mainLogic.schedule(new Message(message));
                             } while (message.equals("PASS\n"));
