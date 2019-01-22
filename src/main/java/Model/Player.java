@@ -64,7 +64,7 @@ public class Player extends Thread {
                             this.clientOut.writeBytes(command);
                             this.clientOut.flush();
                             do {
-                                message = this.clientIn.readLine();
+                                message = this.clientIn.readLine(); //NAJPRAWDOPODOBNIEJ PO ATAKU TU SIE BLOKUJE CZEKAJAC NA NOWY ATAK
                                 this.clientOut.writeBytes("OK\n");
                                 mainLogic.schedule(new Message(message));
                             } while (message.equals("PASS\n"));
