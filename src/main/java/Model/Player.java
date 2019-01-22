@@ -62,14 +62,14 @@ public class Player extends Thread {
                         messages.remove();
                         if (command.equals("TWOJ RUCH\n")) {
                             this.clientOut.writeBytes(command);
+                            this.clientOut.flush();
                             do {
                                 message = this.clientIn.readLine();
+                                this.clientOut.writeBytes("OK\n");
                                 mainLogic.schedule(new Message(message));
                             } while (message.equals("PASS\n"));
                         }
-                        if (command.startsWith("OK")) {
-                            this.clientOut.writeBytes("OK\n");
-                        }
+                    }
 //                        if (command.equals("ERROR\n")) {
 //                            this.clientOut.writeBytes("ERROR\n");
 //                        }
@@ -84,7 +84,6 @@ public class Player extends Thread {
 //                        if (message.startsWith("PASS")) {
 //                            mainLogic.schedule(new Message(command));
 //                        }
-                    }
                 } catch (SocketException ex) {
                     ex.printStackTrace();
                     break;

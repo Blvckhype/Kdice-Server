@@ -71,7 +71,7 @@ public class MainLogic {
                             int[] attack = CommandParser.validateAttack(command);
                             AttackResult[] attackResults = gameHelper.attack(attack, playerList.get(currentPlayer - 1));
                             if (attackResults != null) {
-                                playerList.get(currentPlayer - 1).getClientOut().writeBytes(OK);
+                                //playerList.get(currentPlayer - 1).getClientOut().writeBytes(OK);
                                 //playerList.get(currentPlayer - 1).schedule(new Message(OK));
                                 playerList.get(currentPlayer - 1).getClientOut().flush();
                                 CommandGenerator.attackResult(attackResults, playerList);

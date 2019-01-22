@@ -53,7 +53,8 @@ class CommandGenerator {
     static void attackInfo(List<Player> playerList, String command) throws IOException {
         for (Player player : playerList) {
             if (player.isReady()) {
-                player.getClientOut().writeBytes(command.trim());
+                System.out.println(command);
+                player.getClientOut().writeBytes(command);
                 player.getClientOut().flush();
             }
         }
