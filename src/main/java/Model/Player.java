@@ -30,6 +30,7 @@ public class Player extends Thread {
     }
 
     public void run() {
+
         try {
             String login = this.clientIn.readLine();
             this.clientOut.writeBytes("OK\n");
