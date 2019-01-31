@@ -3,6 +3,7 @@ package Helper;
 import Model.*;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 class CommandGenerator {
@@ -34,27 +35,21 @@ class CommandGenerator {
     }
 
     static void attackResult(AttackResult[] attackResults, List<Player> playerList) throws IOException {
-        StringBuilder attackerRolls = new StringBuilder();
-        StringBuilder opponentRolls = new StringBuilder();
-        for (int i = 0; i < attackResults[0].getCubeRolls().length; i++) {
-            attackerRolls.append(attackResults[0].getCubeRolls()[i]).append(" ");
-        }
-        for (int i = 0; i < attackResults[1].getCubeRolls().length; i++)
-            opponentRolls.append(attackResults[1].getCubeRolls()[i]).append(" ");
         for (Player player : playerList) {
+           // player.getClientOut().flush();
             if (player.isReady()) {
-                player.getClientOut().writeBytes("WYNIK " + attackResults[0].getId() + " " + attackResults[0].getCubeAmount() + " " + attackerRolls +
-                        attackResults[1].getId() + " " + attackResults[1].getCubeAmount() + " " + opponentRolls + attackResults[0].getWinner() + "\n");
+                String result = "WYNIK " + attackResults[0].getId() + " " + attackResults[0].getCubeAmount() + " " + attackResults[0].getCubeRolls() +
+                        " " + attackResults[1].getId() + " " + attackResults[1].getCubeAmount() + " " + attackResults[1].getCubeRolls() + " " + attackResults[0].getWinner() + "\n";
+                player.getClientOut().writeBytes(result);
                 player.getClientOut().flush();
             }
         }
     }
 
-    static void attackInfo(List<Player> playerList, String command) throws IOException {
+    static void attackInfo(List<Player> playerList, String command, int id) throws IOException {
         for (Player player : playerList) {
-            if (player.isReady()) {
-                System.out.println(command);
-                player.getClientOut().writeBytes(command);
+            if (player.isReady() && player.getId() != id) {
+                player.getClientOut().writeBytes(command + "\n");
                 player.getClientOut().flush();
             }
         }

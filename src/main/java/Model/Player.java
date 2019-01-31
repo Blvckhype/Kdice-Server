@@ -1,7 +1,5 @@
 package Model;
 
-import Helper.MainLogic;
-
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
@@ -32,44 +30,31 @@ public class Player extends Thread {
     public void run() {
         try {
             String login = this.clientIn.readLine();
-            this.clientOut.writeBytes("OK\n");
-            this.clientOut.flush();
+//            this.clientOut.writeBytes("OK\n");
+//            this.clientOut.flush();
             setNickname(login.substring(login.indexOf(" ") + 1));
             this.isReady = true;
-            /*while (!isCorrect) {
-                String login = this.clientIn.readLine();
-                if (!login.equals("") && login.startsWith("LOGIN") && login.length() > 6) {
-                    this.clientOut.writeBytes("OK\n");
-                    this.clientOut.flush();
-                    setNickname(login.substring(login.indexOf(" ") + 1));
-                    isCorrect = true;
-                    this.isReady = true;
-                } else if (!login.equals("") && (!login.startsWith("LOGIN") || login.length() <= 6)) {
-                    this.clientOut.writeBytes("ERROR\n");
-                    this.clientOut.flush();
-                }
-            }*/
 
-            MainLogic mainLogic = new MainLogic();
-
-            //noinspection InfiniteLoopStatement
-            while (true) {
-
-                String command, message;
-                try {
-                    if (!this.messages.isEmpty()) {
-                        command = messages.peek().getAction();
-                        messages.remove();
-                        if (command.equals("TWOJ RUCH\n")) {
-                            this.clientOut.writeBytes(command);
-                            this.clientOut.flush();
-                            do {
-                                message = this.clientIn.readLine();
-                                this.clientOut.writeBytes("OK\n");
-                                mainLogic.schedule(new Message(message));
-                            } while (message.equals("PASS\n"));
-                        }
-                    }
+//            MainLogic mainLogic = new MainLogic();
+//
+//            //noinspection InfiniteLoopStatement
+//            while (true) {
+//
+//                String command, message;
+//                try {
+//                    if (!this.messages.isEmpty()) {
+//                        command = messages.peek().getAction();
+//                        messages.remove();
+//                        if (command.equals("TWOJ RUCH\n")) {
+//                            this.clientOut.writeBytes(command);
+//                            this.clientOut.flush();
+//                            do {
+//                                message = this.clientIn.readLine();
+//                                this.clientOut.writeBytes("OK\n");
+//                                mainLogic.schedule(new Message(message));
+//                            } while (!message.equals("PASS\n"));
+//                        }
+//                    }
 //                        if (command.equals("ERROR\n")) {
 //                            this.clientOut.writeBytes("ERROR\n");
 //                        }
@@ -84,25 +69,28 @@ public class Player extends Thread {
 //                        if (message.startsWith("PASS")) {
 //                            mainLogic.schedule(new Message(command));
 //                        }
-                } catch (SocketException ex) {
-                    ex.printStackTrace();
-                    break;
-                } catch (SocketTimeoutException st) {
-                    this.isReady = false;
-                }
-            }
+
+        } catch (SocketException ex) {
+            ex.printStackTrace();
         } catch (SocketTimeoutException st) {
             this.isReady = false;
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                this.clientSocket.close();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
         }
     }
+
+//    } catch(SocketTimeoutException st){
+//        this.isReady = false;
+//    }catch(IOException e){
+//        e.printStackTrace();
+//    }finally {
+//        try {
+//            this.clientSocket.close();
+//        } catch (IOException ex) {
+//            ex.printStackTrace();
+//        }
+//    }
+
 
     public long getId() {
         return id;

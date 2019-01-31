@@ -4,13 +4,13 @@ public class AttackResult {
 
     private long id;
     private int cubeAmount;
-    private int[] cubeRolls;
+    private String cubeRolls;
     private long winner;
 
     public AttackResult(long id, int cubeAmount) {
         this.id = id;
         this.cubeAmount = cubeAmount;
-        this.cubeRolls = new int[this.cubeAmount];
+        this.cubeRolls = "";
         this.winner = -1;
     }
 
@@ -22,7 +22,7 @@ public class AttackResult {
         return cubeAmount;
     }
 
-    public int[] getCubeRolls() {
+    public String getCubeRolls() {
         return cubeRolls;
     }
 
@@ -34,8 +34,11 @@ public class AttackResult {
         this.cubeAmount = cubeAmount;
     }
 
-    public void setCubeRolls(int[] cubeRolls) {
-        this.cubeRolls = cubeRolls;
+    public void setCubeRolls(String cubeRolls) {
+        if (this.cubeRolls.length() == 0)
+            this.cubeRolls = cubeRolls;
+        else
+            this.cubeRolls = this.cubeRolls + " " + cubeRolls;
     }
 
     public long getWinner() {
