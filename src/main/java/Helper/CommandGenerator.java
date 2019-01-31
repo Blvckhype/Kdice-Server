@@ -3,7 +3,7 @@ package Helper;
 import Model.*;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 class CommandGenerator {
@@ -36,10 +36,15 @@ class CommandGenerator {
 
     static void attackResult(AttackResult[] attackResults, List<Player> playerList) throws IOException {
         for (Player player : playerList) {
-           // player.getClientOut().flush();
             if (player.isReady()) {
-                String result = "WYNIK " + attackResults[0].getId() + " " + attackResults[0].getCubeAmount() + " " + attackResults[0].getCubeRolls() +
-                        " " + attackResults[1].getId() + " " + attackResults[1].getCubeAmount() + " " + attackResults[1].getCubeRolls() + " " + attackResults[0].getWinner() + "\n";
+                String result;
+                if (attackResults[1].getId() == 0) {
+                    result = "WYNIK " + attackResults[0].getId() + " " + attackResults[0].getCubeAmount() + " " + attackResults[0].getCubeRolls() +
+                            " " + attackResults[1].getId() + " " + attackResults[1].getCubeAmount() + " " + attackResults[1].getCubeRolls() + attackResults[0].getWinner() + "\n";
+                } else {
+                    result = "WYNIK " + attackResults[0].getId() + " " + attackResults[0].getCubeAmount() + " " + attackResults[0].getCubeRolls() +
+                            " " + attackResults[1].getId() + " " + attackResults[1].getCubeAmount() + " " + attackResults[1].getCubeRolls() + " " + attackResults[0].getWinner() + "\n";
+                }
                 player.getClientOut().writeBytes(result);
                 player.getClientOut().flush();
             }
@@ -64,7 +69,6 @@ class CommandGenerator {
         }
     }
 
-    //FOR ALL
     static void endTurn(List<Player> playerList, int turn, int place) throws IOException {
         for (Player player : playerList) {
             if (player.isReady()) {
@@ -80,8 +84,8 @@ class CommandGenerator {
         player.setReady(false);
     }
 
-    //TODO
     static void endGame(List<Player> playerList, List<Score> generalScore) throws IOException {
+        Collections.sort(generalScore);
         String generalClassification = "";
         for (int i = 0; i < 5; i++) {
             generalClassification = generalClassification + playerList.get(i).getNickname() + " " + generalScore.get(i).getSum() + " ";

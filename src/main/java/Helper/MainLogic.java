@@ -20,7 +20,6 @@ public class MainLogic {
     private ArrayList<Score> generalScore = new ArrayList<>();
     private int playerPositionInTurn;
     private int currentPlayer;
-    private static final Queue<Message> messages = new LinkedBlockingQueue<>();
 
     @SuppressWarnings("InfiniteLoopStatement")
     public synchronized void startServer(ServerSocket serverSocket) throws IOException, InterruptedException {
@@ -64,14 +63,14 @@ public class MainLogic {
                             if (command.startsWith("ATA")) {
                                 player.getClientOut().writeBytes(OK);
                                 player.getClientOut().flush();
-                                CommandGenerator.attackInfo(playerList, command, currentPlayer);
+                                CommandGenerator.attackInfo(playerList, command, (int) player.getId());
                                 int[] attack = CommandParser.validateAttack(command);
                                 AttackResult[] attackResults = gameHelper.attack(attack, playerList.get(currentPlayer - 1));
                                 CommandGenerator.attackResult(attackResults, playerList);
                                 looser = gameHelper.checkPlayerFields(playerList, game, attackResults[1].getId());
-                                if (looser != -1) {
-                                   CommandGenerator.endTurnForPlayer(playerList.get(looser), turns, playerPositionInTurn);
-               //                     generalScore.get(looser + 1).setSum(generalScore.get(looser + 1).getSum() + playerPositionInTurn);
+                                if (looser != -1 && player.isReady()) {
+                                    CommandGenerator.endTurnForPlayer(playerList.get(looser), turns, playerPositionInTurn);
+                                    generalScore.get(looser).setSum(playerPositionInTurn);
                                     playerPositionInTurn--;
                                 }
                             } else if (command.startsWith("PAS"))
@@ -84,12 +83,13 @@ public class MainLogic {
                             CommandGenerator.endRound(playerList);
                             CommandGenerator.boardInfo(game, playerList);
                             currentPlayer = 1;
+                            //System.out.println(rounds);
                             rounds = rounds + 1;
-                            //playerList.stream().forEach(x -> System.out.println(x.isReady()));
                         }
 
                         if (rounds == 100 || !checkActivePlayers(playerList)) {
                             rounds = 1;
+                            setRemainingPlayerScore(playerList);
                             CommandGenerator.endTurn(playerList, turns, playerPositionInTurn);
                             turns++;
                             System.out.println("TURA: " + (turns - 1));
@@ -97,10 +97,14 @@ public class MainLogic {
                             CommandGenerator.boardInfo(game, playerList);
                         }
 
-                    } else
+                    } else {
                         currentPlayer++;
+                        if (currentPlayer == 6)
+                            currentPlayer = 1;
+                    }
 
                     if (turns == 11)
+                        CommandGenerator.endGame(playerList, generalScore);
                         break;
                 }
                 //setUpGame(playerList);
@@ -120,6 +124,15 @@ public class MainLogic {
         return false;
     }
 
+    private void setRemainingPlayerScore(List<Player> playerList) {
+        for (Player player : playerList) {
+            if (player.isReady()) {
+                generalScore.get((int)player.getId() - 1).setSum(playerPositionInTurn);
+                playerPositionInTurn--;
+            }
+        }
+    }
+
 
     private void setUpGame(List<Player> playerList) {
         this.playerPositionInTurn = 5;
@@ -130,12 +143,4 @@ public class MainLogic {
         this.gameHelper = new GameHelper(this.game);
 
     }
-
-//    public boolean schedule(Message message) {
-//        return this.messages.add(message);
-//    }
-//
-//    public Queue<Message> getMessages() {
-//        return messages;
-//    }
 }

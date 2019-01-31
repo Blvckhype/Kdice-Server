@@ -16,7 +16,6 @@ public class Player extends Thread {
     private DataOutputStream clientOut;
     private String nickname;
     private boolean isReady;
-    private final Queue<Message> messages = new LinkedBlockingQueue<>();
 
     public Player(long id, Socket clientSocket) throws IOException {
         this.id = id;
@@ -132,7 +131,4 @@ public class Player extends Thread {
         this.id = id;
     }
 
-    public boolean schedule(Message message) {
-        return messages.add(message);
-    }
 }

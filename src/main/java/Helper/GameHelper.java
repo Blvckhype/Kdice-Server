@@ -1,9 +1,6 @@
 package Helper;
 
-import Model.AttackResult;
-import Model.Game;
-import Model.Player;
-import Model.Point;
+import Model.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,45 +68,37 @@ class GameHelper {
     }
 
     int checkPlayerFields(List<Player> playerList, Game game, long owner) {
-        for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < 5; j++) {
-                if (game.getBoard()[i][j].getOwner() == owner)
-                    return -1;
+        if (owner != 0) {
+            for (int i = 0; i < 5; i++) {
+                for (int j = 0; j < 5; j++) {
+                    if (game.getBoard()[i][j].getOwner() == (int) owner)
+                        return -1;
+                }
             }
+            playerList.get((int) owner - 1).setReady(false);
+            return (int) owner - 1;
         }
-        playerList.get((int) owner - 1).setReady(false);
-        return (int) owner - 1;
+        return -1;
     }
 
 
-    void addCubes(Game game, List<Player> playerList) {
+    void addCubes(Game game, List<Player> playerList) throws InterruptedException {
         for (Player player : playerList) {
             if (player.isReady()) {
                 List<Point> myPoints = new ArrayList<>();
                 for (int i = 0; i < 5; i++) {
                     for (int j = 0; j < 5; j++) {
-                        if (game.getBoard()[i][j].getOwner() == player.getId())
+                        Field field = game.getFieldInfo(i, j);
+                        if (field.getOwner() == player.getId())
                             myPoints.add(new Point(i, j));
                     }
                 }
                 if (myPoints.size() >= 1) {
-                    if (myPoints.size() == 1)
-                        game.getBoard()[myPoints.get(0).getX()][myPoints.get(0).getY()].setCubeCount(game.getBoard()[myPoints.get(0).getX()][myPoints.get(0).getY()].getCubeCount() + 1);
-                    else {
-                        for (int i = 0; i < myPoints.size(); i++) {
-                            int value = new Random().nextInt(myPoints.size() - 1);
-                            if (game.getBoard()[myPoints.get(value).getX()][myPoints.get(value).getY()].getCubeCount() <8)
-                                game.getBoard()[myPoints.get(value).getX()][myPoints.get(value).getY()].setCubeCount(game.getBoard()[myPoints.get(value).getX()][myPoints.get(value).getY()].getCubeCount() + 1);
-                        }
+                    for (int i = 0; i < myPoints.size(); i++) {
+                        int value = new Random().nextInt(myPoints.size());
+                        if (game.getBoard()[myPoints.get(value).getX()][myPoints.get(value).getY()].getCubeCount() < 8)
+                            game.getBoard()[myPoints.get(value).getX()][myPoints.get(value).getY()].setCubeCount(game.getBoard()[myPoints.get(value).getX()][myPoints.get(value).getY()].getCubeCount() + 1);
                     }
-                    //if (game.getBoard()[i][j].getOwner() == player.getId() && game.getBoard()[i][j].getCubeCount() < 8) {
-
-                                /*int cubeDifference = 8 - game.getBoard()[i][j].getCubeCount();
-                                do {
-                                    random = new Random().nextInt(cubeDifference) + 1;
-                                } while (amount - random >= 0);
-                                amount = amount - random;
-                                game.getBoard()[i][j].setCubeCount(game.getBoard()[i][j].getCubeCount() + random);*/
                 }
             }
         }

@@ -22,7 +22,6 @@ public class Score implements Comparable<Score> {
         this.sum = getSum() + sum;
     }
 
-
     @Override
     public int compareTo(Score o) {
 
