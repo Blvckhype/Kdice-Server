@@ -2,7 +2,7 @@ package Model;
 
 import java.util.Random;
 
-public class Game {
+public class  Game {
 
     private Field[][] board = new Field[5][5];
 
@@ -51,15 +51,6 @@ public class Game {
 
     public Field getFieldInfo(int x, int y) {
         return this.board[x][y];
-    }
-
-    public void printBoard () {
-        for (int i = 0; i < 5 ; i++) {
-            for (int j = 0 ; j < 5 ; j++) {
-                System.out.println("Owner: " + this.board[i][j].getOwner() + " CUBES: " + this.board[i][j].getCubeCount());
-            }
-            System.out.println();
-        }
     }
 
 }

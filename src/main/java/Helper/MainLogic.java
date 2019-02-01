@@ -48,7 +48,6 @@ public class MainLogic {
             } else
                 continue;
 
-            Thread.sleep(1000);
             int turns = 1;
             int looser, rounds = 1;
             String command;
@@ -56,13 +55,11 @@ public class MainLogic {
             while (turns <= 10) {
                 for (Player player : playerList) {
                     if (player.isReady()) {
-                        player.getClientOut().writeBytes(MOVE);
-                        player.getClientOut().flush();
+                        CommandGenerator.yourMove(player);
                         do {
                             command = player.getClientIn().readLine(); //ATAK
                             if (command.startsWith("ATA")) {
-                                player.getClientOut().writeBytes(OK);
-                                player.getClientOut().flush();
+                                CommandGenerator.answer(player);
                                 CommandGenerator.attackInfo(playerList, command, (int) player.getId());
                                 int[] attack = CommandParser.validateAttack(command);
                                 AttackResult[] attackResults = gameHelper.attack(attack, playerList.get(currentPlayer - 1));
@@ -74,7 +71,7 @@ public class MainLogic {
                                     playerPositionInTurn--;
                                 }
                             } else if (command.startsWith("PAS"))
-                                player.getClientOut().writeBytes(OK);
+                                CommandGenerator.answer(player);
                         } while (!command.startsWith("PAS"));
 
                         currentPlayer++;
@@ -83,7 +80,6 @@ public class MainLogic {
                             CommandGenerator.endRound(playerList);
                             CommandGenerator.boardInfo(game, playerList);
                             currentPlayer = 1;
-                            //System.out.println(rounds);
                             rounds = rounds + 1;
                         }
 
@@ -105,9 +101,8 @@ public class MainLogic {
 
                     if (turns == 11)
                         CommandGenerator.endGame(playerList, generalScore);
-                        break;
+                    break;
                 }
-                //setUpGame(playerList);
             }
             break;
         }
@@ -127,7 +122,7 @@ public class MainLogic {
     private void setRemainingPlayerScore(List<Player> playerList) {
         for (Player player : playerList) {
             if (player.isReady()) {
-                generalScore.get((int)player.getId() - 1).setSum(playerPositionInTurn);
+                generalScore.get((int) player.getId() - 1).setSum(playerPositionInTurn);
                 playerPositionInTurn--;
             }
         }

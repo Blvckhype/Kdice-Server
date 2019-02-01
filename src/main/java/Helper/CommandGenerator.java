@@ -1,6 +1,7 @@
 package Helper;
 
 import Model.*;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -8,14 +9,31 @@ import java.util.List;
 
 class CommandGenerator {
 
+    final static Logger logger = Logger.getLogger(CommandGenerator.class);
+
+
     static void connected(Player player) throws IOException {
         player.getClientOut().writeBytes("POLACZONO\n");
+        logger.info("DO: " + player.getClientSocket().getLocalAddress() + " WYSLANO POLACZONO");
+        player.getClientOut().flush();
+    }
+
+    static void answer(Player player) throws IOException {
+        player.getClientOut().writeBytes("OK\n");
+        logger.info("DO: " + player.getClientSocket().getLocalAddress() + " WYSLANO TWOJ RUCH");
+        player.getClientOut().flush();
+    }
+
+    static void yourMove(Player player) throws IOException {
+        player.getClientOut().writeBytes("TWOJ RUCH\n");
+        logger.info("DO: " + player.getClientSocket().getLocalAddress() + " WYSLANO OK");
         player.getClientOut().flush();
     }
 
     static void startMessage(List<Player> playerList, int startPlayer) throws IOException {
         for (Player player : playerList) {
             player.getClientOut().writeBytes("START " + player.getId() + " " + startPlayer + "\n");
+            logger.info("DO: " + player.getClientSocket().getLocalAddress() + " WYSLANO START " + player.getId() + " " + startPlayer );
             player.getClientOut().flush();
         }
     }
@@ -26,7 +44,9 @@ class CommandGenerator {
                 for (int x = 0; x < 5; x++) {
                     for (int y = 0; y < 5; y++) {
                         Field field = game.getFieldInfo(x, y);
-                        player.getClientOut().writeBytes("PLANSZA " + (x + 1) + " " + (y + 1) + " " + field.getOwner() + " " + field.getCubeCount() + "\n");
+                        String boardInfo = "PLANSZA " + (x + 1) + " " + (y + 1) + " " + field.getOwner() + " " + field.getCubeCount();
+                        player.getClientOut().writeBytes(boardInfo + "\n");
+                        logger.info("DO: " + player.getClientSocket().getLocalAddress() + " WYSLANO " + boardInfo);
                         player.getClientOut().flush();
                     }
                 }
@@ -46,6 +66,7 @@ class CommandGenerator {
                             " " + attackResults[1].getId() + " " + attackResults[1].getCubeAmount() + " " + attackResults[1].getCubeRolls() + " " + attackResults[0].getWinner() + "\n";
                 }
                 player.getClientOut().writeBytes(result);
+                logger.info("DO: " + player.getClientSocket().getLocalAddress() + " WYSLANO " + result);
                 player.getClientOut().flush();
             }
         }
@@ -53,8 +74,9 @@ class CommandGenerator {
 
     static void attackInfo(List<Player> playerList, String command, int id) throws IOException {
         for (Player player : playerList) {
-            if (player.isReady() && player.getId() != id) {
+            if (player.isReady()) { // && player.getId() != id
                 player.getClientOut().writeBytes(command + "\n");
+                logger.info("DO: " + player.getClientSocket().getLocalAddress() + " WYSLANO " + command);
                 player.getClientOut().flush();
             }
         }
@@ -64,6 +86,8 @@ class CommandGenerator {
         for (Player player : playerList) {
             if (player.isReady()) {
                 player.getClientOut().writeBytes("KONIEC RUNDY\n");
+                logger.info("DO: " + player.getClientSocket().getLocalAddress() + " WYSLANO KONIEC RUNDY");
+                logger.info("-----------------------------------------------------------------------------");
                 player.getClientOut().flush();
             }
         }
@@ -73,6 +97,7 @@ class CommandGenerator {
         for (Player player : playerList) {
             if (player.isReady()) {
                 player.getClientOut().writeBytes("TURA " + turn + " " + place-- + "\n");
+                logger.info("DO: " + player.getClientSocket().getLocalAddress() + " WYSLANO TURA " + turn + " " + place--);
                 player.getClientOut().flush();
             }
         }
@@ -80,6 +105,7 @@ class CommandGenerator {
 
     static void endTurnForPlayer(Player player, int turn, int place) throws IOException {
         player.getClientOut().writeBytes("TURA " + turn + " " + place + "\n");
+        logger.info("DO: " + player.getClientSocket().getLocalAddress() + " WYSLANO TURA " + turn + " " + place);
         player.getClientOut().flush();
         player.setReady(false);
     }
@@ -92,6 +118,7 @@ class CommandGenerator {
         }
         for (Player player : playerList) {
             player.getClientOut().writeBytes("KONIEC " + generalClassification + "\n");
+            logger.info("DO: " + player.getClientSocket().getLocalAddress() + " WYSLANO KONIEC " + generalClassification);
             player.getClientOut().flush();
 
         }
